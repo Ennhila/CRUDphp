@@ -65,30 +65,5 @@ function borrarComic($conn, $id) {
     $stmt->bind_param("i", $id);
     $stmt->execute();
 }
-/* 
-    //Listar
-$resultado = $conn->query("SELECT * FROM comic");
 
-
-                if($resultado->num_rows > 0){
-                    while($comic = $resultado->fetch_assoc()){
-                        echo "<tr>";
-                        echo "<td>" . htmlspecialchars($comic['id']) . "</td>";
-                        echo "<td>" . htmlspecialchars($comic['coleccion']) . "</td>";
-                        echo "<td>" . htmlspecialchars($comic['numero']) . "</td>";
-                        echo "<td>" . htmlspecialchars($comic['guionista']) . "</td>";
-                        echo "<td>" . htmlspecialchars($comic['dibujante']) . "</td>";
-                        echo "<td>" . htmlspecialchars($comic['fecha_publi']) . "</td>";
-                        echo "<td>" . htmlspecialchars($comic['precio']) . "</td>";
-                        echo '<td><a href="funcionesBD.php?id=' . $comic['id'] . '">Editar</a></td>';
-                        echo '<td><a href="funcionesBD.php?id=' . $comic['id'] . '">Borrar</a></td>';
-                        echo "</tr>";
-                    }
-
-                }else{
-                    echo "<tr><td colspan='9'> No hay comics registrados </td></tr>";
-                }
-
-
-*/
 ?>
