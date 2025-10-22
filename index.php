@@ -4,15 +4,32 @@ require_once 'php/funcionesBD.php';
 //CREATE DATABASE and Table
 if (isset($_POST['crear'])) {
     crearBDDyTabla($conn, $database);
+    header('Location: index.php');
 }
 
 // Search
-$buscar = $_GET['buscar'] ?? "";
-$resultado = leerComics($conn, $buscar);
+
 
 // Insert
 if (isset($_POST['insertar'])) {
+    $coleccion = $_POST['coleccion'];
+    $numero = $_POST['numero'];
+    $guionista = $_POST['guionista'];
+    $dibujante = $_POST['dibujante'];
+    $fecha = $_POST['fecha'];
+    $precio = $_POST['precio'];
     insertarComic($conn, $coleccion, $numero, $guionista, $dibujante, $fecha, $precio);
+
+    header('Location: index.php');
+}
+//Listar
+$resultado = $conn->query("SELECT * FROM comic");
+
+//Borrar
+if (isset($_GET['borrar_id'])) {
+    $id = $_GET['borrar_id'];
+    borrarComic($conn, $id);
+    header('Location: index.php');
 }
 ?>
 
@@ -32,35 +49,50 @@ if (isset($_POST['insertar'])) {
     <form method="get">
         <h2>Buscar</h2>
         <select name="buscarOpcion" for="option">
-            <option value="coleccion" <?= ($_GET['buscarOpcion'] ?? '') === 'coleccion' ? 'selected' : '' ?> >Coleccion</option>
-            <option value="guionista" <?= ($_GET['buscarOpcion'] ?? '') === 'guionista' ? 'selected' : '' ?>>Guionista</option>
-            <option value="dibujante" <?= ($_GET['buscarOpcion'] ?? '') === 'dibujante' ? 'selected' : '' ?>>Dibujante</option>
+            <option value="coleccion"  >Coleccion</option>
+            <option value="guionista" >Guionista</option>
+            <option value="dibujante" >Dibujante</option>
         </select>
-        <input type="text" name="buscar" placeholder="Buscar..." value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
+        <input type="text" name="buscar" placeholder="Buscar..." >
         <button type="submit" name="filtrar">Filtrar</button>
     </form>
 
     <hr>
-    <form action="/php/funcionesBD.php" method="get">
+    <form action="" method="get">
         <h2>Lisatado de Comics</h2>
-        <table>
+        <table border = "1">
         <tr>
-            <th>ID</th><th>Colección</th><th>Número</th><th>Guionista</th><th>Dibujante</th>
-            <th>Fecha</th><th>Precio</th><th colspan="2">Acciones</th>
+            <th>ID</th>
+            <th>Colección</th>
+            <th>Número</th>
+            <th>Guionista</th>
+            <th>Dibujante</th>
+            <th>Fecha</th>
+            <th>Precio</th>
+            <th colspan="2">Acciones</th>
         </tr>
-        
-        <tr>
-            <td><?= $fila['id'] ?></td>
-            <td><?= htmlspecialchars($fila['coleccion']) ?></td>
-            <td><?= $fila['numero'] ?></td>
-            <td><?= htmlspecialchars($fila['guionista']) ?></td>
-            <td><?= htmlspecialchars($fila['dibujante']) ?></td>
-            <td><?= $fila['fecha_publicacion'] ?></td>
-            <td><?= $fila['precio'] ?> €</td>
-            <td><a href="editar.php?id=<?= $fila['id'] ?>">Editar</a></td>
-            <td><a href="borrar.php?id=<?= $fila['id'] ?>" onclick="return confirm('¿Seguro que quieres borrar?')">Borrar</a></td>
-        </tr>
-         
+            <?php 
+                if($resultado->num_rows > 0){
+                    while($comic = $resultado->fetch_assoc()){
+                        echo "<tr>";
+                        echo "<td>" . htmlspecialchars($comic['id']) . "</td>";
+                        echo "<td>" . htmlspecialchars($comic['coleccion']) . "</td>";
+                        echo "<td>" . htmlspecialchars($comic['numero']) . "</td>";
+                        echo "<td>" . htmlspecialchars($comic['guionista']) . "</td>";
+                        echo "<td>" . htmlspecialchars($comic['dibujante']) . "</td>";
+                        echo "<td>" . htmlspecialchars($comic['fecha_publi']) . "</td>";
+                        echo "<td>" . htmlspecialchars($comic['precio']) . "</td>";
+                        echo '<td><a href="">Editar</a></td>';
+                        echo '<td><a href="index.php?borrar_id=' . $comic['id'] . '">Borrar</a></td>';
+                        echo "</tr>";
+                    }
+
+                }else{
+                    echo "<tr><td colspan='9'> No hay comics registrados </td></tr>";
+                }
+               
+                     
+            ?>
         </table>
     </form>
     <hr>
